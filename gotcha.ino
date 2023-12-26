@@ -6,6 +6,13 @@
 const char* ssid = "wifi_name";
 const char* password = "wifi_password";
 
+//FLASH RELATED INITIALIZATIONS
+#define LAMP_PIN 4
+int lampChannel = 7;           // a free PWM channel (some channels used by camera)
+const int pwmfreq = 50000;     // 50K pwm frequency
+const int pwmresolution = 9;   // duty cycle bit range
+const int pwmMax = pow(2,pwmresolution)-1;
+
 void setup() {
   Serial.begin(115200);
   delay(10);
