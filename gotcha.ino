@@ -77,5 +77,22 @@ void configInitCamera(){
 void loop() {
   configInitCamera();
   delay(1000);
+
+  // Simulate the photoshoot by turning on the lamp for 1 second
+  setLamp(100);
+  delay(1000);
+  setLamp(0);
+}
+
+void setLamp(int newVal) {
+    if (newVal != -1) {
+        // Apply a logarithmic function to the scale.
+        int brightness = round((pow(2,(1+(newVal*0.02)))-2)/6*pwmMax);
+        ledcWrite(lampChannel, brightness);
+        Serial.print("Lamp: ");
+        Serial.print(newVal);
+        Serial.print("%, pwm = ");
+        Serial.println(brightness);
+    }
 }
 
