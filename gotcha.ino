@@ -82,6 +82,22 @@ void loop() {
   setLamp(100);
   delay(1000);
   setLamp(0);
+
+  // Tested out the camera capture
+  run_face_detect();
+  delay(1000);
+}
+
+bool run_face_detect() {
+  bool faceRecognised = false;
+  int64_t start_time = esp_timer_get_time();
+  fb = esp_camera_fb_get();
+
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    return false;
+  }
+  Serial.println("Camera capture successfull");
 }
 
 void setLamp(int newVal) {
