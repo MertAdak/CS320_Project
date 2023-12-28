@@ -98,6 +98,18 @@ bool run_face_detect() {
     return false;
   }
   Serial.println("Camera capture successfull");
+
+  int64_t fb_get_time = esp_timer_get_time();
+  image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
+  uint32_t res = fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
+
+  if (!res)
+  {
+    Serial.println("to rgb888 failed");
+    dl_matrix3du_free(image_matrix);
+  }
+
+  esp_camera_fb_return(fb);
 }
 
 void setLamp(int newVal) {
