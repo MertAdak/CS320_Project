@@ -1,3 +1,6 @@
+#include "fd_forward.h"
+#include "fr_forward.h"
+#include "fr_flash.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
