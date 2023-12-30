@@ -12,6 +12,8 @@ const char* password = "wifi_password";
 //FLASH RELATED INITIALIZATIONS
 #define LAMP_PIN 4
 int lampChannel = 7;           // a free PWM channel (some channels used by camera)
+unsigned int Status;
+
 const int pwmfreq = 50000;     // 50K pwm frequency
 const int pwmresolution = 9;   // duty cycle bit range
 const int pwmMax = pow(2,pwmresolution)-1;
@@ -113,6 +115,28 @@ bool run_face_detect() {
   }
 
   esp_camera_fb_return(fb);
+  box_array_t *net_boxes = face_detect(image_matrix, &mtmn_config);
+
+  if (net_boxes) {
+
+    if (align_face(net_boxes, image_matrix, aligned_face) == ESP_OK)
+    {
+      Serial.println("Face Detected");
+      Status = 1;
+    }
+    else
+    {
+      Serial.println("Face Not Aligned");
+    }
+  }
+
+  else
+  {
+    Serial.println("No Face Detected");
+  }
+
+  dl_matrix3du_free(image_matrix);
+  return faceRecognised;
 }
 
 void setLamp(int newVal) {
