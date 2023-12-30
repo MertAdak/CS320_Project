@@ -5,9 +5,18 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include "esp_camera.h"
+#include <UniversalTelegramBot.h>
 
+// Wifi related initializations
 const char* ssid = "wifi_name";
 const char* password = "wifi_password";
+
+// Initialize Telegram BOT and Create a Telegram Bot Object
+String BOTtoken = "your_telegram_bot_token";  // your Bot Token (Get from Botfather)
+String CHAT_ID = "your_chat_id"; // this can be found by messaging to the myID bot on Telegram
+
+UniversalTelegramBot bot(BOTtoken, clientTCP);
+WiFiClientSecure clientTCP;
 
 //FLASH RELATED INITIALIZATIONS
 #define LAMP_PIN 4
@@ -64,6 +73,15 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
+  // Test if the device is connected to the Telegram
+  if (clientTCP.connect("api.telegram.org", 443)) {
+    Serial.println("Connected to Telegram");
+  }
+  else {
+    Serial.println("Telegram connection failed");
+  }
+  
 }
 //ESP32-CAM camera configuration
 void configInitCamera(){
