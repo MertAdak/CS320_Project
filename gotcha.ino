@@ -33,6 +33,12 @@ static inline mtmn_config_t app_mtmn_config()
   return mtmn_config;
 }
 
+mtmn_config_t mtmn_config = app_mtmn_config();
+static face_id_name_list st_face_list;
+dl_matrix3du_t *image_matrix =  NULL;
+camera_fb_t * fb = NULL;
+dl_matrix3du_t *aligned_face = dl_matrix3du_alloc(1, FACE_WIDTH, FACE_HEIGHT, 3);
+
 const int pwmfreq = 50000;     // 50K pwm frequency
 const int pwmresolution = 9;   // duty cycle bit range
 const int pwmMax = pow(2,pwmresolution)-1;
