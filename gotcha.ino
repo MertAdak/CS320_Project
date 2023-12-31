@@ -120,6 +120,9 @@ void configInitCamera(){
     delay(1000);
     ESP.restart();
   }
+  // Drop down frame size for higher initial frame rate
+  sensor_t * s = esp_camera_sensor_get();
+  s->set_framesize(s, FRAMESIZE_QVGA);  // UXGA|SXGA|XGA|SVGA|VGA|CIF|QVGA|HQVGA|QQVGA 
 }
 String sendPhotoTelegram() {
   const char* myDomain = "api.telegram.org";
@@ -175,7 +178,34 @@ String sendPhotoTelegram() {
     }  
     
     clientTCP.print(tail);
+    esp_camera_fb_return(fb);
     
+    int waitTime = 10000;   // timeout 10 seconds
+    long startTimer = millis();
+    boolean state = false;
+    
+    while ((startTimer + waitTime) > millis()){
+      Serial.print(".");
+      delay(100);      
+      while (clientTCP.available()) {
+        char c = clientTCP.read();
+        if (state==true) getBody += String(c);        
+        if (c == '\n') {
+          if (getAll.length()==0) state=true; 
+          getAll = "";
+        } 
+        else if (c != '\r')
+          getAll += String(c);
+        startTimer = millis();
+      }
+      if (getBody.length()>0) break;
+    }
+    clientTCP.stop();
+    Serial.println(getBody);
+    
+  }else{
+    getBody="Connected to api.telegram.org failed.";
+    Serial.println("Connected to api.telegram.org failed.");
   }
   return getBody;
 }
