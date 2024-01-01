@@ -52,36 +52,35 @@ camera_fb_t * fb = NULL;
 dl_matrix3du_t *aligned_face = dl_matrix3du_alloc(1, FACE_WIDTH, FACE_HEIGHT, 3);
 
 void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); 
+  // Init Serial Monitor
   Serial.begin(115200);
-  delay(10);
 
-  // We start by connecting to a WiFi network
-  Serial.println();
+  // Set LED Flash as output
+  pinMode(LAMP_PIN, OUTPUT);
+  ledcSetup(lampChannel, pwmfreq, pwmresolution);  // configure LED PWM channel
+  setLamp(0);                                      // set default value  
+  ledcAttachPin(LAMP_PIN, lampChannel);            // attach the GPIO pin to the channel
+
+  // Config and init the camera
+  configInitCamera();
+
+  // Connect to Wi-Fi
+  WiFi.mode(WIFI_STA);
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-
   WiFi.begin(ssid, password);
-
+  clientTCP.setCACert(TELEGRAM_CERTIFICATE_ROOT); // Add root certificate for api.telegram.org
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
     Serial.print(".");
+    delay(500);
   }
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+  Serial.println();
+  Serial.print("ESP32-CAM IP Address: ");
   Serial.println(WiFi.localIP());
-
-  // Test if the device is connected to the Telegram
-  if (clientTCP.connect("api.telegram.org", 443)) {
-    Serial.println("Connected to Telegram");
-  }
-  else {
-    Serial.println("Telegram connection failed");
-  }
-  
 }
+
 //ESP32-CAM camera configuration
 void configInitCamera(){
   camera_config_t config;
