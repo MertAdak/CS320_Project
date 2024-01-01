@@ -22,6 +22,9 @@ WiFiClientSecure clientTCP;
 #define LAMP_PIN 4
 int lampChannel = 7;           // a free PWM channel (some channels used by camera)
 unsigned int Status;
+const int pwmfreq = 50000;     // 50K pwm frequency
+const int pwmresolution = 9;   // duty cycle bit range
+const int pwmMax = pow(2,pwmresolution)-1;
 
 static inline mtmn_config_t app_mtmn_config()
 {
@@ -47,10 +50,6 @@ static face_id_name_list st_face_list;
 dl_matrix3du_t *image_matrix =  NULL;
 camera_fb_t * fb = NULL;
 dl_matrix3du_t *aligned_face = dl_matrix3du_alloc(1, FACE_WIDTH, FACE_HEIGHT, 3);
-
-const int pwmfreq = 50000;     // 50K pwm frequency
-const int pwmresolution = 9;   // duty cycle bit range
-const int pwmMax = pow(2,pwmresolution)-1;
 
 void setup() {
   Serial.begin(115200);
@@ -124,6 +123,7 @@ void configInitCamera(){
   sensor_t * s = esp_camera_sensor_get();
   s->set_framesize(s, FRAMESIZE_QVGA);  // UXGA|SXGA|XGA|SVGA|VGA|CIF|QVGA|HQVGA|QQVGA 
 }
+
 String sendPhotoTelegram() {
   const char* myDomain = "api.telegram.org";
   String getAll = "";
@@ -131,7 +131,9 @@ String sendPhotoTelegram() {
 
   camera_fb_t * fb = NULL;
   
+  // Flash to demonastrate the photo effect 
   setLamp(100);
+  delay(1000);
   fb = esp_camera_fb_get();
   setLamp(0);
   
@@ -141,11 +143,8 @@ String sendPhotoTelegram() {
     ESP.restart();
     return "Camera capture failed";
   }
-  // Flash to demonastrate the photo effect  
- 
   
   Serial.println("Connect to " + String(myDomain));
-
 
   if (clientTCP.connect(myDomain, 443)) {
     Serial.println("Connection successful");
