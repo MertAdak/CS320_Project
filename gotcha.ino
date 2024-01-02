@@ -262,7 +262,17 @@ bool run_face_detect() {
   dl_matrix3du_free(image_matrix);
   return faceRecognised;
 }
-
+void receiveTelegramMessages() {
+  if (millis() > lastTimeBotRan + botRequestDelay)  {
+    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    while(numNewMessages) {
+      Serial.println("got response");
+      handleNewMessages(numNewMessages);
+      numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    }
+    lastTimeBotRan = millis();
+  }
+}
 void setLamp(int newVal) {
     if (newVal != -1) {
         // Apply a logarithmic function to the scale.
