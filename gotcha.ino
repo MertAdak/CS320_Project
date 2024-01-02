@@ -26,6 +26,8 @@ const int pwmfreq = 50000;     // 50K pwm frequency
 const int pwmresolution = 9;   // duty cycle bit range
 const int pwmMax = pow(2,pwmresolution)-1;
 
+int default_photo_count = 1;
+
 static inline mtmn_config_t app_mtmn_config()
 {
   mtmn_config_t mtmn_config = {0};
@@ -287,7 +289,15 @@ void handleNewMessages(int numNewMessages) {
     if (text == "/takephoto") {
       Status=1;
     }
-}
+    //Parse the command. First 13 characters are the command name, the rest is the value
+    else if(text.substring(0,14) == "/setphotocount"){
+      int new_photo_count = text.substring(15).toInt();
+      Serial.println("count:" + new_photo_count);
+      if(new_photo_count > 0){
+        default_photo_count = new_photo_count;
+      }
+    }
+  }
 }
 void setLamp(int newVal) {
     if (newVal != -1) {
