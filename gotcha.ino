@@ -273,6 +273,22 @@ void receiveTelegramMessages() {
     lastTimeBotRan = millis();
   }
 }
+
+void handleNewMessages(int numNewMessages) {
+  Serial.println("handleNewMessages");
+  Serial.println(String(numNewMessages));
+
+  for (int i=0; i<numNewMessages; i++) {
+    String chat_id = String(bot.messages[i].chat_id);
+    String text = bot.messages[i].text;
+
+    Serial.println("Received command: " + text);
+
+    if (text == "/takephoto") {
+      Status=1;
+    }
+}
+}
 void setLamp(int newVal) {
     if (newVal != -1) {
         // Apply a logarithmic function to the scale.
