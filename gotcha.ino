@@ -210,17 +210,11 @@ String sendPhotoTelegram() {
 
 
 void loop() {
-  configInitCamera();
-  delay(1000);
-
-  // Simulate the photoshoot by turning on the lamp for 1 second
-  setLamp(100);
-  delay(1000);
-  setLamp(0);
-
-  // Tested out the camera capture
-  run_face_detect();
-  delay(1000);
+run_face_detect();
+ if (Status == 1) {
+   sendPhotoTelegram();
+   Status = 0;
+ }
 }
 
 bool run_face_detect() {
